@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class KubernetesMetricClApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KubernetesMetricClApplication.class, args).close();
+        System.exit(
+                SpringApplication.exit(
+                        SpringApplication.run(KubernetesMetricClApplication.class, args)));
     }
 }

@@ -24,6 +24,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation "io.kubernetes:client-java:${kubernetesClientVersion}"
+//	implementation 'info.picocli:picocli:4.6.1'
+	implementation "info.picocli:picocli-spring-boot-starter:4.6.1"
 
 	testImplementation "io.fabric8:kubernetes-server-mock:${kubernetesMockVersion}"
 	testImplementation "com.squareup.okhttp3:mockwebserver:${okhttp3Version}"

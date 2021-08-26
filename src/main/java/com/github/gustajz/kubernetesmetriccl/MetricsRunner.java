@@ -1,41 +1,59 @@
 package com.github.gustajz.kubernetesmetriccl;
 
 import io.kubernetes.client.Metrics;
-import io.kubernetes.client.custom.*;
+import io.kubernetes.client.custom.ContainerMetrics;
+import io.kubernetes.client.custom.NodeMetrics;
+import io.kubernetes.client.custom.PodMetrics;
+import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.AppsV1Api;
-import io.kubernetes.client.openapi.models.*;
+import io.kubernetes.client.openapi.models.V1Container;
+import io.kubernetes.client.openapi.models.V1Deployment;
 import io.kubernetes.client.util.Config;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.Callable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
+import picocli.CommandLine;
 
 /** @author gustavojotz */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MetricsRunner implements CommandLineRunner {
+@CommandLine.Command(
+        description = "Prints information about current usage, limits and request of resources.")
+public class MetricsRunner implements Callable<Integer> {
 
-    private final ConfigurableApplicationContext context;
+    @CommandLine.Option(
+            names = {"-n", "--namespace"},
+            description = "Namespace name.",
+            required = true)
+    private String namespace;
+
+    @CommandLine.Option(
+            names = {"-no", "--nodes"},
+            description = "Nodes metrics.")
+    private boolean showNodes;
+
+    @CommandLine.Option(
+            names = {"-po", "--pods"},
+            description = "Pods metrics and configuration.")
+    private boolean showPods;
+
+    @CommandLine.Option(
+            names = {"-h", "--help"},
+            usageHelp = true,
+            description = "Show this help message and exit.")
+    private boolean helpRequested = false;
 
     @Override
-    public void run(String... args) throws Exception {
-
-        if (args.length < 1) {
-            System.out.println("Required namespace");
-            System.exit(SpringApplication.exit(context));
-        }
-
-        String namespace = args[0];
+    public Integer call() throws Exception {
 
         ApiClient client = Config.defaultClient();
 
@@ -43,10 +61,20 @@ public class MetricsRunner implements CommandLineRunner {
 
         final Metrics metrics = new Metrics(client);
 
-        nodeMetrics(metrics);
-        podMetrics(metrics, namespace);
+        if (showNodes) {
+            nodeMetrics(metrics);
+        }
 
-        System.exit(SpringApplication.exit(context));
+        if (showPods) {
+            podMetrics(metrics, namespace);
+        }
+
+        if (!showPods && !showNodes) {
+            nodeMetrics(metrics);
+            podMetrics(metrics, namespace);
+        }
+
+        return 0;
     }
 
     /**
@@ -145,7 +173,6 @@ public class MetricsRunner implements CommandLineRunner {
 
     /**
      * @param metrics
-     * @param namespace
      * @throws ApiException
      */
     private void nodeMetrics(Metrics metrics) throws ApiException {
@@ -192,6 +219,9 @@ public class MetricsRunner implements CommandLineRunner {
                     return String.format("%sMi", mi);
                 }
                 return ki;
+            } else if (quantity.getFormat() == Quantity.Format.DECIMAL_SI) {
+                var c = quantity.getNumber().multiply(BigDecimal.valueOf(1000));
+                return new DecimalFormat("#0'm'").format(c);
             }
             return new DecimalFormat("#0.000").format(quantity.getNumber());
         }

@@ -5,4 +5,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = 'kubernetes-metric-cl'
+rootProject.name = 'kubernetes-metrics-cli'

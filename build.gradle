@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.github.gustajz'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -24,7 +24,6 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation "io.kubernetes:client-java:${kubernetesClientVersion}"
-//	implementation 'info.picocli:picocli:4.6.1'
 	implementation "info.picocli:picocli-spring-boot-starter:4.6.1"
 
 	testImplementation "io.fabric8:kubernetes-server-mock:${kubernetesMockVersion}"
@@ -34,6 +33,10 @@ dependencies {
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+bootJar {
+	archiveFileName = "${rootProject.name}.jar"
 }
 
 test {

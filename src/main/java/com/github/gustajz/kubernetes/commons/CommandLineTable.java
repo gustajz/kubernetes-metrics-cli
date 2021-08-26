@@ -1,8 +1,9 @@
-package com.github.gustajz.kubernetesmetriccl;
+package com.github.gustajz.kubernetes.commons;
 
 import java.util.*;
 
 /** @author https://www.logicbig.com/how-to/code-snippets/jcode-java-cmd-command-line-table.html */
+@SuppressWarnings("java:S106")
 public class CommandLineTable {
     private static final String HORIZONTAL_SEP = "-";
     private String verticalSep;
@@ -74,6 +75,7 @@ public class CommandLineTable {
         System.out.println();
     }
 
+    @SuppressWarnings("java:S3457")
     private void printRow(Object[] cells, int[] maxWidths) {
         for (int i = 0; i < cells.length; i++) {
             Object s = cells[i];

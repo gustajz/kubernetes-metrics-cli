@@ -1,4 +1,4 @@
-package com.github.gustajz.kubernetesmetriccl;
+package com.github.gustajz.kubernetes;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

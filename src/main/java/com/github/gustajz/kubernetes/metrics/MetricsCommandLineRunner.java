@@ -1,4 +1,4 @@
-package com.github.gustajz.kubernetesmetriccl;
+package com.github.gustajz.kubernetes.metrics;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

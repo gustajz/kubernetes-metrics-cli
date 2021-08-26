@@ -1,0 +1,54 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'org.graalvm.buildtools.native' version '0.9.3'
+	id 'com.diffplug.gradle.spotless' version '4.5.1'
+}
+
+group = 'com.github.gustajz'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	maven { url 'https://repo.spring.io/release' }
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation "io.kubernetes:client-java:${kubernetesClientVersion}"
+
+	testImplementation "io.fabric8:kubernetes-server-mock:${kubernetesMockVersion}"
+	testImplementation "com.squareup.okhttp3:mockwebserver:${okhttp3Version}"
+	testImplementation "com.squareup.okhttp3:okhttp:${okhttp3Version}"
+	testImplementation "org.junit-pioneer:junit-pioneer:${junitPioneerVersion}"
+
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+spotless {
+	format 'misc', {
+		target '*.gradle', '*.md', '.gitignore', '**/*.yml', '**/*.yaml', '**/*.json'
+		targetExclude 'build/**'
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+	java {
+		targetExclude 'build/**'
+		importOrder()
+		removeUnusedImports()
+		googleJavaFormat().aosp()
+	}
+}
